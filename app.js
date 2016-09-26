@@ -4,6 +4,7 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var routes = require('./routes');
 var nunjucks = require('nunjucks');
+var models = require('./models');
 
 app.use(routes);
 
@@ -23,6 +24,17 @@ nunjucks.configure('views', {
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
-app.listen(5432, function() {
-  console.log("We are listening");
-});
+
+
+models.Page.sync();
+
+models.User.sync({})
+.then(function () {
+    return models.Page.sync({})
+})
+.then(function () {
+    app.listen(3001, function () {
+        console.log('Server is listening on port 3001!');
+    });
+})
+.catch(console.error);
