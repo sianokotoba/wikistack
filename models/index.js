@@ -9,11 +9,11 @@ var Page = db.define('page', {
   },
   urlTitle: {
     type: Sequelize.STRING,
-    isUrl: true,
+
     allowNull: false
   },
   route: {
-    type: Sequelize.STRING,
+    type: Sequelize.VIRTUAL,
     get: function() {
       return '/wiki/' + this.getDataValue('urlTitle');
     }

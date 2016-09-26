@@ -2,18 +2,19 @@ var express = require('express');
 var app = express();
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-var routes = require('./routes');
+var wikiRouter = require('./routes/wiki.js');
 var nunjucks = require('nunjucks');
 var models = require('./models');
 
-app.use(routes);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(morgan(':method :url :status'));
 
-app.use('/static', express.static('public'));
+app.use(wikiRouter);
+
+app.use('/static', express.static('/public'));
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -26,11 +27,11 @@ app.engine('html', nunjucks.render);
 
 
 
-models.Page.sync();
+models.Page.sync({force:true});
 
-models.User.sync({})
+models.User.sync({force: true})
 .then(function () {
-    return models.Page.sync({})
+    return models.Page.sync({force: true})
 })
 .then(function () {
     app.listen(3001, function () {
